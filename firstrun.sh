@@ -1,18 +1,12 @@
 #!/bin/bash
   
   #Search for config files, if they don't exist, copy the default ones
-  if [ ! -f /config/apache.conf ]; then
-    echo "copying apache.conf"
-    cp /root/apache.conf /config/apache.conf
+  if [ ! -f /config/php.ini ]; then
+    echo "copying php.ini"
+    cp  /etc/php5/apache2/php.ini /config/php.ini
   else
-    echo "apache.conf already exists"
-  fi
-  
-  if [ ! -f /config/zm.conf ]; then
-    echo "copying zm.conf"
-    cp /root/zm.conf /config/zm.conf
-  else
-    echo "zm.conf already exists"
+    echo "php.ini already exists"
+    cp /config/php.ini /etc/php5/apache2/php.ini
   fi
   
   # Copy mysql database if it doesn't exit
@@ -28,13 +22,9 @@
   if [ ! -d /config/data ]; then
     echo "moving data folder to config folder"
     mkdir /config/data
-    cp -R -p /usr/share/zoneminder /config/data/
-    rm /config/data/zoneminder/images
-    rm /config/data/zoneminder/events
-    rm /config/data/zoneminder/temp
-    mkdir /config/data/zoneminder/images
-    mkdir /config/data/zoneminder/events
-    mkdir /config/data/zoneminder/temp
+    mkdir /config/data/images
+    mkdir /config/data/events
+    mkdir /config/data/temp
   else
     echo "using existing data directory"
   fi
@@ -49,15 +39,18 @@
 
   
   echo "creating symbolink links"
-  rm -r /usr/share/zoneminder
+  rm -r /usr/share/zoneminder/www/events
+  rm -r /usr/share/zoneminder/www/images
+  rm -r /usr/share/zoneminder/www/temp
   rm -r /var/lib/mysql
-  rm -r /etc/zm
   rm -r /usr/share/perl5/ZoneMinder
-  ln -s /config/data/zoneminder /usr/share/zoneminder
+  ln -s /config/data/events /usr/share/zoneminder/www/events
+  ln -s /config/data/images /usr/share/zoneminder/www/images
+  ln -s /config/data/temp /usr/share/zoneminder/www/temp
   ln -s /config/mysql /var/lib/mysql
-  ln -s /config /etc/zm
   ln -s /config/perl5/ZoneMinder /usr/share/perl5/ZoneMinder
   chown -R mysql:mysql /var/lib/mysql
+  chown -R www-data:www-data /config/data
   chmod -R go+rw /config
   
   #Get docker env timezone and set system timezone
