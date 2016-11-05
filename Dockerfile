@@ -54,5 +54,5 @@ update-rc.d -f zoneminder remove;
 
 RUN apt-get install -y supervisor
 
-COPY ./supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 CMD ["/usr/bin/supervisord"]
